@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class DataSeeder {
             if (userRepository.count() == 0) {
                 BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-                userRepository.saveAll(List.of(
+                userRepository.saveAll(Objects.requireNonNull(List.of(
                     User.builder()
                         .username("admin")
                         .password(encoder.encode("admin123"))
@@ -41,12 +42,12 @@ public class DataSeeder {
                         .email("user@7-eleven.vn")
                         .role(User.Role.USER)
                         .build()
-                ));
+                )));
             }
 
-            // Seed products 7-Eleven style           
+            // Seed products         
             if (productRepository.count() == 0) {
-                productRepository.saveAll(List.of(
+                productRepository.saveAll(Objects.requireNonNull(List.of(
                     Product.builder()
                         .name("Cà phê Americano")
                         .description("Cà phê đen pha máy, thơm ngon")
@@ -119,7 +120,7 @@ public class DataSeeder {
                         .imageUrl("https://placehold.co/300x300?text=Cornetto")
                         .attributes(Map.of("flavor", "socola", "weight", "120ml"))
                         .build()
-                ));
+                )));
             }
         };
     }
