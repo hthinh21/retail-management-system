@@ -29,16 +29,16 @@ public class SecurityConfig {
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 // Public
-                                                .requestMatchers("/api/auth/**").permitAll()
+                                                .requestMatchers("/auth/**").permitAll()
                                                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**")
                                                 .permitAll()
                                                 // Admin only
-                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 // Products: Khách vãng lai xem được, Admin mới được sửa
-                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**").permitAll()
-                                                .requestMatchers("/api/products/**").hasRole("ADMIN")
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET, "/products/**").permitAll()
+                                                .requestMatchers("/products/**").hasRole("ADMIN")
                                                 // Orders: Cả User và Admin đều thao tác được (User mua hàng, Admin xử lý đơn)
-                                                .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
+                                                .requestMatchers("/orders/**").hasAnyRole("USER", "ADMIN")
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

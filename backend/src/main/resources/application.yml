@@ -22,17 +22,25 @@ spring:
       host: redis
       port: 6379
 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Ho_Chi_Minh
+  
   cache:
     type: redis
 
 server:
   port: 8080
+  servlet:
+    context-path: /api/v1
 
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+  use-management-port: false
 
 jwt:
   secret: ${JWT_SECRET}
@@ -41,3 +49,4 @@ jwt:
 logging:
   level:
     com.seveneleven: DEBUG
+
