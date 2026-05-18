@@ -10,11 +10,16 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -25,7 +30,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "Đăng nhập", description = "Trả về JWT token")
+    @Value("${jwt.expiration}")
+    private Long expiration;
+
+    @Operation(summary = "Đăng nhập", description = "Set JWT vào httpOnly cookie")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Đăng nhập thành công"),
         @ApiResponse(responseCode = "401", description = "Sai username hoặc password")
@@ -40,9 +48,33 @@ public class AuthController {
                 }
             """))
         )
-        @Valid @RequestBody LoginRequest request
+        @Valid @RequestBody LoginRequest request,
+        HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authService.login(request));
+        AuthResponse auth = authService.login(request);
+
+        // Set JWT vào httpOnly cookie
+        Cookie cookie = new Cookie("jwt", auth.getToken());
+        cookie.setHttpOnly(true);       // JS không đọc được
+        cookie.setSecure(false);        // true khi dùng HTTPS production
+        cookie.setPath("/");
+        cookie.setMaxAge((int)(expiration / 1000));
+        response.addCookie(cookie);
+
+        // Không trả token trong body — chỉ trả user info
+        auth.setToken(null);
+        return ResponseEntity.ok(auth);
+    }
+
+    @Operation(summary = "Đăng xuất")
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt", "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Xóa cookie ngay
+        response.addCookie(cookie);
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @Operation(summary = "Đăng ký tài khoản", description = "Mặc định role USER")
@@ -65,5 +97,24 @@ public class AuthController {
     ) {
         authService.register(request);
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
+    }
+
+    @Operation(summary = "Lấy thông tin user hiện tại")
+    @GetMapping("/me")
+    public ResponseEntity<?> me(HttpServletRequest request) {
+        // Lấy token từ cookie
+        String token = Arrays.stream(
+            request.getCookies() != null ? request.getCookies() : new Cookie[0])
+            .filter(c -> "jwt".equals(c.getName()))
+            .map(Cookie::getValue)
+            .findFirst()
+            .orElse(null);
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(401)
+                .body(Map.of("message", "Not authenticated"));
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Authenticated"));
     }
 }

@@ -1,6 +1,7 @@
 package com.seveneleven.rms.service.impl;
 
 import com.seveneleven.rms.dto.request.ProductRequest;
+import com.seveneleven.rms.dto.response.PageResponse;
 import com.seveneleven.rms.dto.response.ProductResponse;
 import com.seveneleven.rms.entity.Product;
 import com.seveneleven.rms.exception.ResourceNotFoundException;
@@ -9,11 +10,12 @@ import com.seveneleven.rms.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.cache.annotation.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -24,24 +26,22 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     // Redis cache — lần 2 trở đi không query DB
-    @Cacheable(value = "products", key = "'all'")
+    @Cacheable(value = "products", key = "'all_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     @Override
-    public List<ProductResponse> getAllProducts() {
-        log.debug("Fetching ALL products from DATABASE");
-        return productRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public PageResponse<ProductResponse> getAllProducts(Pageable pageable) {
+        log.debug("Fetching ALL products page {} from DATABASE", pageable.getPageNumber());
+        return PageResponse.from(
+                productRepository.findAll(pageable).map(this::toResponse)
+        );
     }
 
-    @Cacheable(value = "products", key = "'active'")
+    @Cacheable(value = "products", key = "'active_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     @Override
-    public List<ProductResponse> getActiveProducts() {
-        log.debug("Fetching ACTIVE products from DATABASE");
-        return productRepository.findByActiveTrue()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public PageResponse<ProductResponse> getActiveProducts(Pageable pageable) {
+        log.debug("Fetching ACTIVE products page {} from DATABASE", pageable.getPageNumber());
+        return PageResponse.from(
+                productRepository.findByActiveTrue(pageable).map(this::toResponse)
+        );
     }
 
     @Cacheable(value = "product", key = "#id")

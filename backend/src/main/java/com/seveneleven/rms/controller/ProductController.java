@@ -1,17 +1,22 @@
 package com.seveneleven.rms.controller;
 
 import com.seveneleven.rms.dto.request.ProductRequest;
+import com.seveneleven.rms.dto.response.PageResponse;
 import com.seveneleven.rms.dto.response.ProductResponse;
 import com.seveneleven.rms.service.ProductService;
+
+import org.springframework.data.domain.Sort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,8 +31,18 @@ public class ProductController {
 
     @Operation(summary = "Danh sách sản phẩm active - dành cho User tạo đơn hàng")
     @GetMapping("/products")
-    public ResponseEntity<List<ProductResponse>> getActiveProducts() {
-        return ResponseEntity.ok(productService.getActiveProducts());
+    public ResponseEntity<PageResponse<ProductResponse>> getActiveProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(productService.getActiveProducts(pageable));
     }
 
     @Operation(summary = "Chi tiết sản phẩm")
@@ -38,10 +53,20 @@ public class ProductController {
 
     // ─── ADMIN endpoints ─────────────────────────────────────────
 
-    @Operation(summary = "[ADMIN] Danh sách tất cả sản phẩm kể cả đã xóa")
+    @Operation(summary = "[ADMIN] Danh sách tất cả sản phẩm")
     @GetMapping("/admin/products")
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<PageResponse<ProductResponse>> getAllProducts(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "12") int size,
+        @RequestParam(defaultValue = "createdAt") String sortBy,
+        @RequestParam(defaultValue = "desc") String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
     @Operation(summary = "[ADMIN] Thêm sản phẩm mới")
