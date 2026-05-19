@@ -82,21 +82,24 @@ Vào `http://localhost:5173`
 ---
 
 ## Cấu trúc project
+```text
 retail-management-system/
-├── backend/                          # Spring Boot
-│   ├── src/main/java/com/seveneleven/rms/
-│   │   ├── config/                   # Security, Redis, Swagger, CORS
-│   │   ├── controller/               # REST API endpoints
-│   │   ├── service/                  # Business logic
-│   │   │   └── impl/
-│   │   ├── repository/               # JPA repositories
-│   │   ├── entity/                   # Database entities
-│   │   ├── dto/
-│   │   │   ├── request/              # Request DTOs
-│   │   │   └── response/             # Response DTOs
-│   │   ├── exception/                # Global exception handler
-│   │   └── security/                 # JWT filter, JwtUtil
-│   ├── src/test/                     # Unit tests
+├── backend/                          # Spring Boot Backend
+│   ├── src/
+│   │   ├── main/java/com/seveneleven/rms/
+│   │   │   ├── config/               # Cấu hình Security, Redis, Swagger, CORS
+│   │   │   ├── controller/           # REST API endpoints (Controllers)
+│   │   │   ├── dto/
+│   │   │   │   ├── request/          # DTOs gửi lên từ Client
+│   │   │   │   └── response/         # DTOs trả về từ Server
+│   │   │   ├── entity/               # Thực thể Database (JPA Entities)
+│   │   │   ├── exception/            # Bộ xử lý lỗi tập trung (Global Exception Handler)
+│   │   │   ├── repository/           # Lớp truy vấn Database (JPA Repositories)
+│   │   │   ├── security/             # JWT Filter, JwtUtil
+│   │   │   └── service/              # Lớp dịch vụ (Business logic Interfaces)
+│   │   │       └── impl/             # Lớp hiện thực dịch vụ (Implementations)
+│   │   └── test/java/com/seveneleven/rms/
+│   │       └── service/              # Thư mục chứa Unit Tests (e.g., AuthServiceTest)
 │   ├── Dockerfile
 │   └── pom.xml
 │
@@ -119,6 +122,7 @@ retail-management-system/
 ├── docs/                             # Documentation
 ├── docker-compose.yml
 └── README.md
+```
 
 ---
 
