@@ -41,12 +41,18 @@ export default function HomePage() {
       <div className="bg-gradient-to-r from-7eleven-dark via-gray-900 to-7eleven-dark
                       text-white py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-black">
-            <span className="text-7eleven-red">7</span>
-            <span className="text-7eleven-orange">-ELEVEN</span>
-            <span className="text-white"> Store</span>
-          </h1>
-          <p className="text-gray-400 mt-1">Đặt hàng nhanh, giao tận nơi</p>
+          <div className="flex items-center gap-3">
+            <div className="bg-white p-1 rounded-lg flex items-center justify-center shadow-md">
+              <img src="/logo.svg" alt="7-Eleven Logo" className="h-12 object-contain" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black tracking-wider leading-none">
+                <span className="text-white">7-Eleven</span>
+                <span className="text-7eleven-orange"> Store</span>
+              </h1>
+              <p className="text-gray-400 mt-1.5 text-sm">Đặt hàng nhanh, giao tận nơi</p>
+            </div>
+          </div>
 
           {/* Search */}
           <div className="relative mt-4 max-w-md">

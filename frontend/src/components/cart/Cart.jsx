@@ -1,5 +1,6 @@
 import useCartStore from "../../store/cartStore";
 import useAuthStore from "../../store/authStore";
+import useToastStore from "../../store/toastStore";
 import { formatVND } from "../../utils/formatCurrency";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 import { createOrder } from "../../api/orderApi";
@@ -8,15 +9,15 @@ import { useState } from "react";
 export default function Cart({ onLoginRequired }) {
   const { items, removeItem, updateQuantity, clearCart, totalPrice, totalItems } =
     useCartStore();
-  const { token } = useAuthStore();
+  const { user } = useAuthStore();
+  const { addToast } = useToastStore();
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleOrder = async () => {
     if (items.length === 0) return;
 
-    if(!token){
+    if(!user){
         onLoginRequired()
         return;
     }
@@ -31,10 +32,9 @@ export default function Cart({ onLoginRequired }) {
       });
       clearCart();
       setNote("");
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      addToast("Đặt hàng thành công! Cảm ơn bạn đã ủng hộ 7-Eleven.", "success");
     } catch (err) {
-      alert(err.response?.data?.message || "Đặt hàng thất bại");
+      addToast(err.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại!", "error");
     } finally {
       setLoading(false);
     }
@@ -140,14 +140,6 @@ export default function Cart({ onLoginRequired }) {
                 {formatVND(totalPrice())}
               </span>
             </div>
-
-            {/* Success message */}
-            {success && (
-              <div className="bg-green-50 border border-green-200 text-green-700
-                              text-sm rounded-lg px-3 py-2 text-center">
-                Đặt hàng thành công!
-              </div>
-            )}
 
             {/* Buttons */}
             <button

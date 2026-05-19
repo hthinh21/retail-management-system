@@ -12,9 +12,11 @@ import OrderListPage from "./pages/admin/OrderListPage";
 import UserLayout from "./pages/user/UserLayout";
 import MyOrdersPage from "./pages/user/MyOrdersPage";
 
+import ToastContainer from "./components/ui/Toast";
+
 const AdminRoute = ({ children }) => {
-  const { token, user } = useAuthStore();
-  if (!token) return <Navigate to="/login" replace />;
+  const { user } = useAuthStore();
+  if (!user) return <Navigate to="/login" replace />;
   if (user?.role !== "ADMIN") return <Navigate to="/" replace />;
   return children;
 };
@@ -22,6 +24,7 @@ const AdminRoute = ({ children }) => {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       <BrowserRouter>
         <Routes>
           {/* Public — không cần login */}

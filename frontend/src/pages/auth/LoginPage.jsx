@@ -43,12 +43,12 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex mb-4">
-            <span className="bg-7eleven-red text-white font-black text-4xl px-3 py-2">
-              7
+          <div className="inline-flex mb-4 items-stretch shadow-md rounded-lg overflow-hidden border border-white/10">
+            <span className="bg-white px-3 py-2 flex items-center justify-center">
+              <img src="./Logo_of_7-Eleven.svg.png" alt="7-Eleven Logo" className="h-10 object-contain" />
             </span>
-            <span className="bg-white text-7eleven-dark font-black text-4xl px-3 py-2">
-              ELEVEn
+            <span className="bg-white text-7eleven-dark font-black text-4xl px-4 py-2 flex items-center tracking-wider">
+              7-Eleven
             </span>
           </div>
           <p className="text-gray-400 mt-2">Chuỗi cửa hàng tiện lợi</p>
@@ -62,7 +62,7 @@ export default function LoginPage() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600
                             rounded-lg px-4 py-3 mb-4 text-sm">
-              ❌ {error}
+              {error}
             </div>
           )}
 

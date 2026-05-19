@@ -11,9 +11,9 @@ export default function Navbar({ onCartClick }) {
 
     const handleLogout = async () => {
         try {
-            await logoutApi(); // Xóa httpOnly cookie
+            await logoutApi();
         } catch (_) { }
-        logout();            // Xóa Zustand store
+        logout();
         navigate("/");
     };
 
@@ -22,12 +22,18 @@ export default function Navbar({ onCartClick }) {
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2">
-                    <div className="flex">
-                        <span className="bg-7eleven-red text-white font-black text-xl px-2 py-1">7</span>
-                        <span className="bg-white text-7eleven-dark font-black text-xl px-2 py-1">ELEVEn</span>
+                <Link to="/" className="flex items-center gap-3 group">
+                    <div className="bg-white p-1 rounded-md flex items-center justify-center shadow-md">
+                        <img src="/Logo_of_7-Eleven.svg.png" alt="7-Eleven Logo" className="h-8 object-contain" />
                     </div>
-                    <span className="text-gray-400 text-sm hidden md:block">Retail Management</span>
+                    <div className="flex flex-col">
+                        <span className="font-black text-lg leading-none tracking-wider text-white group-hover:text-7eleven-orange transition-colors">
+                            7-Eleven
+                        </span>
+                        <span className="text-gray-400 text-[10px] tracking-wider leading-none mt-1 hidden md:block">
+                            Retail Management
+                        </span>
+                    </div>
                 </Link>
 
                 {/* Right side */}
