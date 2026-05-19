@@ -172,21 +172,21 @@ order_items
 id, order_id, product_id, quantity, unit_price, subtotal
 
 ### Order Status Flow
-
+```text
 PENDING → CONFIRMED → PAID → SHIPPING → DELIVERED
   ↓
 CANCELLED (bất kỳ bước nào)
-
+```
 ---
 
 ## Caching Strategy
-
+```text
 Redis (Server-side)              React Query (Client-side)
 ───────────────────              ─────────────────────────
 products cache: 10 phút          products cache: 5 phút
 orders cache: 10 phút            orders cache: 5 phút
 Evict khi: create/update/delete  Invalidate khi: mutation
-
+```
 ---
 
 ## Chạy Unit Test
